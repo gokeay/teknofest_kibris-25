@@ -21,6 +21,8 @@ from django.shortcuts import get_object_or_404
 import openpyxl
 from openpyxl.utils import get_column_letter
 from io import BytesIO
+from django.db.models import Sum, F
+
 
 @login_required
 @role_required(['izleyici', 'admin'])
