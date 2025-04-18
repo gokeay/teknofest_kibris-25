@@ -22,12 +22,13 @@ class T3PersonelVeriler(models.Model):
 
     ogle_yemegi = models.PositiveIntegerField()
     aksam_yemegi = models.PositiveIntegerField()
+    lunchbox = models.PositiveIntegerField(default=0)
 
     submitteddate = models.DateField(auto_now_add=True)
     submittedtime = models.TimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.kisi.get_full_name()} - {self.koordinatorluk} - {self.birim} - Öğle: {self.ogle_yemegi} - Akşam: {self.aksam_yemegi}"
+        return f"{self.kisi.get_full_name()} - {self.koordinatorluk} - {self.birim} - Öğle: {self.ogle_yemegi} - Akşam: {self.aksam_yemegi} - Lunchbox: {self.lunchbox}"
 
     class Meta:
         verbose_name = 'T3 Personel Verisi'
