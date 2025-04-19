@@ -103,8 +103,8 @@ def t3personel_form(request):
     bugun = timezone.now().date()
     simdi = timezone.now().time()
     
-    # Saat 14:00'dan önce mi kontrol et
-    saat_uygun = simdi < time(22, 0)
+    # Saat 12:00'dan önce mi kontrol et
+    saat_uygun = simdi < time(12, 0)
 
     # Güncelleme modu kontrolü
     guncelleme_modu = request.session.get('t3personel_guncelleme_modu', False)
@@ -124,18 +124,21 @@ def t3personel_form(request):
             ogle_key = f'ogle_{atama.id}'
             aksam_key = f'aksam_{atama.id}'
             lunchbox_key = f'lunchbox_{atama.id}'
+            coffee_key = f'coffee_{atama.id}'
             ogle_sayisi = request.POST.get(ogle_key)
             aksam_sayisi = request.POST.get(aksam_key)
-            lunchbox_sayisi = request.POST.get(lunchbox_key) or '0'
+            lunchbox_sayisi = request.POST.get(lunchbox_key)
+            coffee_sayisi = request.POST.get(coffee_key)
 
-            if ogle_sayisi and aksam_sayisi and ogle_sayisi.isdigit() and aksam_sayisi.isdigit() and lunchbox_sayisi.isdigit():
+            if ogle_sayisi and aksam_sayisi and lunchbox_sayisi and coffee_sayisi and ogle_sayisi.isdigit() and aksam_sayisi.isdigit() and lunchbox_sayisi.isdigit() and coffee_sayisi.isdigit():
                 T3PersonelVeriler.objects.create(
                     kisi=user,
                     koordinatorluk=atama.koordinatorluk,
                     birim=atama.birim,
                     ogle_yemegi=int(ogle_sayisi),
                     aksam_yemegi=int(aksam_sayisi),
-                    lunchbox=int(lunchbox_sayisi)
+                    lunchbox=int(lunchbox_sayisi),
+                    coffee_break=int(coffee_sayisi)
                 )
 
         log_user_action(request, 'T3 Personel Formu Gönderildi', 'T3 Personel Form')
@@ -156,9 +159,9 @@ def t3personel_form_guncelle(request):
     """T3 personel verilerini güncelleme modu"""
     simdi = timezone.now().time()
     
-    # Saat 14:00'dan önce mi kontrol et
-    if simdi >= time(22, 0):
-        messages.error(request, 'Veri güncelleme için son saat 14:00\'tır. Şu an güncelleme yapamazsınız.')
+    # Saat 12:00'dan önce mi kontrol et
+    if simdi >= time(12, 0):
+        messages.error(request, 'Veri güncelleme için son saat 12:00\'dır. Şu an güncelleme yapamazsınız.')
         return redirect('forms:t3personel_form')
     
     # Güncelleme modunu aç
