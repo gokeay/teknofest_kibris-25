@@ -8,7 +8,8 @@ from .models import (
     T3PersonelVeriler, 
     GonulluDurumVeriler, 
     GonulluSorunVeriler, 
-    SorumluVeriler
+    SorumluVeriler,
+    SistemAyarlari
 )
 from accounts.views import log_user_action
 
@@ -101,10 +102,19 @@ def t3personel_form(request):
     user = request.user
     atamalar = T3PersonelAtama.objects.filter(kisi=user)
     bugun = timezone.now().date()
-    simdi = timezone.now().time()
+    simdi = timezone.localtime(timezone.now()).time()  # Türkiye saatine çevir
     
-    # Saat 12:00'dan önce mi kontrol et
-    saat_uygun = simdi < time(12, 0)
+    # Sistem ayarlarından son saat ve dakikayı al
+    try:
+        veri_guncelleme_son_saat = int(SistemAyarlari.objects.get(anahtar='veri_guncelleme_son_saat').deger)
+        veri_guncelleme_son_dakika = int(SistemAyarlari.objects.get(anahtar='veri_guncelleme_son_dakika').deger)
+    except (SistemAyarlari.DoesNotExist, ValueError):
+        veri_guncelleme_son_saat = 14  # Varsayılan değer
+        veri_guncelleme_son_dakika = 0  # Varsayılan değer
+    
+    # Saat kontrolü
+    son_saat = time(veri_guncelleme_son_saat, veri_guncelleme_son_dakika)
+    saat_uygun = simdi < son_saat
 
     # Güncelleme modu kontrolü
     guncelleme_modu = request.session.get('t3personel_guncelleme_modu', False)
@@ -149,7 +159,9 @@ def t3personel_form(request):
         'atamalar': atamalar,
         'bugunku_kayitlar': bugunku_kayitlar,
         'saat_uygun': saat_uygun,
-        'guncelleme_modu': guncelleme_modu
+        'guncelleme_modu': guncelleme_modu,
+        'veri_guncelleme_son_saat': veri_guncelleme_son_saat,
+        'veri_guncelleme_son_dakika': veri_guncelleme_son_dakika
     }
     return render(request, 'forms/t3personel_form.html', context)
 
@@ -157,11 +169,21 @@ def t3personel_form(request):
 @role_required(['t3personel'])
 def t3personel_form_guncelle(request):
     """T3 personel verilerini güncelleme modu"""
-    simdi = timezone.now().time()
+    simdi = timezone.localtime(timezone.now()).time()  # Türkiye saatine çevir
     
-    # Saat 12:00'dan önce mi kontrol et
-    if simdi >= time(12, 0):
-        messages.error(request, 'Veri güncelleme için son saat 12:00\'dır. Şu an güncelleme yapamazsınız.')
+    # Sistem ayarlarından son saat ve dakikayı al
+    try:
+        veri_guncelleme_son_saat = int(SistemAyarlari.objects.get(anahtar='veri_guncelleme_son_saat').deger)
+        veri_guncelleme_son_dakika = int(SistemAyarlari.objects.get(anahtar='veri_guncelleme_son_dakika').deger)
+    except (SistemAyarlari.DoesNotExist, ValueError):
+        veri_guncelleme_son_saat = 14  # Varsayılan değer
+        veri_guncelleme_son_dakika = 0  # Varsayılan değer
+    
+    # Saat kontrolü
+    son_saat = time(veri_guncelleme_son_saat, veri_guncelleme_son_dakika)
+    
+    if simdi >= son_saat:
+        messages.error(request, f'Veri güncelleme için son saat {veri_guncelleme_son_saat:02d}:{veri_guncelleme_son_dakika:02d}\'dır. Şu an güncelleme yapamazsınız.')
         return redirect('forms:t3personel_form')
     
     # Güncelleme modunu aç
