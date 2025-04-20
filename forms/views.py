@@ -119,16 +119,29 @@ def t3personel_form(request):
     # Güncelleme modu kontrolü
     guncelleme_modu = request.session.get('t3personel_guncelleme_modu', False)
     
-    # Daha önce aynı gün veri gönderilmişse onları çek
-    bugunku_kayitlar = None if guncelleme_modu else T3PersonelVeriler.objects.filter(kisi=user, submitteddate=bugun)
+    # Bugünkü kayıtları çek
+    bugunku_kayitlar = T3PersonelVeriler.objects.filter(kisi=user, submitteddate=bugun)
+    kayit_var = bugunku_kayitlar.exists()
+
+    # Mevcut verileri dictionary'e dönüştür
+    mevcut_veriler = {}
+    if kayit_var:
+        for kayit in bugunku_kayitlar:
+            key = f"{kayit.koordinatorluk}-{kayit.birim}"
+            mevcut_veriler[key] = {
+                'ogle_yemegi': kayit.ogle_yemegi,
+                'aksam_yemegi': kayit.aksam_yemegi,
+                'lunchbox': kayit.lunchbox,
+                'coffee_break': kayit.coffee_break
+            }
 
     if not atamalar.exists():
         messages.warning(request, 'Henüz size atanmış koordinatörlük ve birim bulunmamaktadır.')
 
     if request.method == 'POST':
-        if guncelleme_modu:
-            T3PersonelVeriler.objects.filter(kisi=user, submitteddate=bugun).delete()
-            request.session['t3personel_guncelleme_modu'] = False
+        if kayit_var:
+            # Mevcut kayıtları güncelle
+            bugunku_kayitlar.delete()
             
         for atama in atamalar:
             ogle_key = f'ogle_{atama.id}'
@@ -153,6 +166,7 @@ def t3personel_form(request):
 
         log_user_action(request, 'T3 Personel Formu Gönderildi', 'T3 Personel Form')
         messages.success(request, 'Sipariş bilgileriniz başarıyla kaydedildi.')
+        request.session['t3personel_guncelleme_modu'] = False
         return redirect('forms:t3personel_form')
 
     context = {
@@ -161,7 +175,9 @@ def t3personel_form(request):
         'saat_uygun': saat_uygun,
         'guncelleme_modu': guncelleme_modu,
         'veri_guncelleme_son_saat': veri_guncelleme_son_saat,
-        'veri_guncelleme_son_dakika': veri_guncelleme_son_dakika
+        'veri_guncelleme_son_dakika': veri_guncelleme_son_dakika,
+        'kayit_var': kayit_var,
+        'mevcut_veriler': mevcut_veriler
     }
     return render(request, 'forms/t3personel_form.html', context)
 
