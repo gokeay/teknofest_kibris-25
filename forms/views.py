@@ -97,6 +97,8 @@ def gonullu_sorun_form(request):
 @role_required(['t3personel'])
 def t3personel_form(request):
     """T3 personel sipariş formu"""
+    print("Güncelleme modu:", request.session.get('t3personel_guncelleme_modu', False))
+    print("Bugünkü kayıtlar:", T3PersonelVeriler.objects.filter(kisi=request.user, submitteddate=timezone.now().date()).exists())
     log_user_action(request, 'T3 Personel Form Sayfası Görüntülendi', 'T3 Personel Form')
     
     user = request.user
@@ -194,6 +196,7 @@ def t3personel_form(request):
         log_user_action(request, 'T3 Personel Formu Gönderildi', 'T3 Personel Form')
         messages.success(request, 'Sipariş bilgileriniz başarıyla kaydedildi.')
         request.session['t3personel_guncelleme_modu'] = False
+        request.session.modified = True  # Session değişikliğinin kaydedildiğinden emin ol
         return redirect('forms:t3personel_form')
 
     context = {
@@ -230,6 +233,7 @@ def t3personel_form_guncelle(request):
     
     # Güncelleme modunu aç
     request.session['t3personel_guncelleme_modu'] = True
+    request.session.modified = True  # Session değişikliğinin kaydedildiğinden emin ol
     messages.info(request, 'Veri güncelleme modundasınız. Lütfen yeni değerleri girin.')
     return redirect('forms:t3personel_form')
 

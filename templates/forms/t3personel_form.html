@@ -55,13 +55,13 @@
                     </tbody>
                 </table>
             </div>
-            {% if saat_uygun %}
             <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-3">
+                {% if saat_uygun %}
                 <a href="{% url 'forms:t3personel_form_guncelle' %}" class="btn btn-warning">
                     <i class="fas fa-edit me-1"></i>Güncelle
                 </a>
+                {% endif %}
             </div>
-            {% endif %}
             {% else %}
             <form method="post" class="needs-validation" novalidate>
                 {% csrf_token %}
@@ -106,6 +106,13 @@
             </form>
             {% endif %}
         {% endif %}
+        <!-- Debug bilgileri -->
+        <div class="mt-4" style="display: none;">
+            <hr>
+            <h5>Debug Bilgileri</h5>
+            <p>Güncelleme Modu: {{ guncelleme_modu }}</p>
+            <p>Kayıt Var: {{ kayit_var }}</p>
+        </div>
     </div>
 </div>
 {% endblock %}
