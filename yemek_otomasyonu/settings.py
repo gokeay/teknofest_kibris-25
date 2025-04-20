@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'crispy_bootstrap5',
     'django_cleanup.apps.CleanupConfig',
+    'csp',  # Content Security Policy
     
     # Proje uygulamaları
     'accounts',
@@ -56,6 +57,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'csp.middleware.CSPMiddleware',  # CSP middleware'i eklendi
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -175,3 +177,30 @@ CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'Europe/Istanbul'
+
+# Content Security Policy ayarları
+CSP_DEFAULT_SRC = ("'self'",)
+CSP_SCRIPT_SRC = (
+    "'self'",
+    'https://code.jquery.com',
+    'https://cdn.jsdelivr.net',
+    'https://cdnjs.cloudflare.com',
+    "'unsafe-inline'",
+    "'unsafe-eval'",
+)
+CSP_STYLE_SRC = (
+    "'self'",
+    'https://cdn.jsdelivr.net',
+    'https://cdnjs.cloudflare.com',
+    "'unsafe-inline'",
+)
+CSP_FONT_SRC = (
+    "'self'",
+    'https://cdn.jsdelivr.net',
+    'https://cdnjs.cloudflare.com',
+)
+CSP_IMG_SRC = (
+    "'self'",
+    'data:',
+)
+CSP_CONNECT_SRC = ("'self'",)
