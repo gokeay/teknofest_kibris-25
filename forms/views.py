@@ -135,7 +135,8 @@ def t3personel_form(request):
             'ogle_yemegi': 0,
             'aksam_yemegi': 0,
             'lunchbox': 0,
-            'coffee_break': 0
+            'coffee_break': 0,
+            'coffee_break_active': atama.coffee_break
         }
         
         # Eğer bugün için veri varsa ve güncelleme modundaysak

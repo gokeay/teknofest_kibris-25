@@ -179,28 +179,32 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'Europe/Istanbul'
 
 # Content Security Policy ayarları
-CSP_DEFAULT_SRC = ("'self'",)
-CSP_SCRIPT_SRC = (
-    "'self'",
-    'https://code.jquery.com',
-    'https://cdn.jsdelivr.net',
-    'https://cdnjs.cloudflare.com',
-    "'unsafe-inline'",
-    "'unsafe-eval'",
-)
-CSP_STYLE_SRC = (
-    "'self'",
-    'https://cdn.jsdelivr.net',
-    'https://cdnjs.cloudflare.com',
-    "'unsafe-inline'",
-)
-CSP_FONT_SRC = (
-    "'self'",
-    'https://cdn.jsdelivr.net',
-    'https://cdnjs.cloudflare.com',
-)
-CSP_IMG_SRC = (
-    "'self'",
-    'data:',
-)
-CSP_CONNECT_SRC = ("'self'",)
+CONTENT_SECURITY_POLICY = {
+    'DIRECTIVES': {
+        'default-src': ("'self'",),
+        'script-src': (
+            "'self'",
+            'https://code.jquery.com',
+            'https://cdn.jsdelivr.net',
+            'https://cdnjs.cloudflare.com',
+            "'unsafe-inline'",
+            "'unsafe-eval'",
+        ),
+        'style-src': (
+            "'self'",
+            'https://cdn.jsdelivr.net',
+            'https://cdnjs.cloudflare.com',
+            "'unsafe-inline'",
+        ),
+        'font-src': (
+            "'self'",
+            'https://cdn.jsdelivr.net',
+            'https://cdnjs.cloudflare.com',
+        ),
+        'img-src': (
+            "'self'",
+            'data:',
+        ),
+        'connect-src': ("'self'",),
+    }
+}

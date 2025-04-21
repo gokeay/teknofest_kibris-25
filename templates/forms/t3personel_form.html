@@ -38,7 +38,12 @@
                             <th>Öğle Yemeği</th>
                             <th>Akşam Yemeği</th>
                             <th>Lunchbox</th>
-                            <th>Coffee Break</th>
+                            {% for atama in atamalar %}
+                                {% if atama.coffee_break_active %}
+                                <th>Coffee Break</th>
+                                {% break %}
+                                {% endif %}
+                            {% endfor %}
                         </tr>
                     </thead>
                     <tbody>
@@ -49,7 +54,12 @@
                             <td>{{ kayit.ogle_yemegi }}</td>
                             <td>{{ kayit.aksam_yemegi }}</td>
                             <td>{{ kayit.lunchbox }}</td>
-                            <td>{{ kayit.coffee_break }}</td>
+                            {% for atama in atamalar %}
+                                {% if atama.koordinatorluk == kayit.koordinatorluk and atama.birim == kayit.birim and atama.coffee_break_active %}
+                                <td>{{ kayit.coffee_break }}</td>
+                                {% break %}
+                                {% endif %}
+                            {% endfor %}
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -88,11 +98,13 @@
                                 <input type="number" class="form-control" id="lunchbox_{{ atama.id }}" name="lunchbox_{{ atama.id }}" 
                                        min="0" value="{{ atama.lunchbox }}" required>
                             </div>
+                            {% if atama.coffee_break_active %}
                             <div class="col-md-3">
                                 <label for="coffee_{{ atama.id }}" class="form-label">Coffee Break</label>
                                 <input type="number" class="form-control" id="coffee_{{ atama.id }}" name="coffee_{{ atama.id }}" 
                                        min="0" value="{{ atama.coffee_break }}" required>
                             </div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
