@@ -38,12 +38,9 @@
                             <th>Öğle Yemeği</th>
                             <th>Akşam Yemeği</th>
                             <th>Lunchbox</th>
-                            {% for atama in atamalar %}
-                                {% if atama.coffee_break_active %}
-                                <th>Coffee Break</th>
-                                {% break %}
-                                {% endif %}
-                            {% endfor %}
+                            {% if show_coffee_break %}
+                            <th>Coffee Break</th>
+                            {% endif %}
                         </tr>
                     </thead>
                     <tbody>
@@ -54,12 +51,9 @@
                             <td>{{ kayit.ogle_yemegi }}</td>
                             <td>{{ kayit.aksam_yemegi }}</td>
                             <td>{{ kayit.lunchbox }}</td>
-                            {% for atama in atamalar %}
-                                {% if atama.koordinatorluk == kayit.koordinatorluk and atama.birim == kayit.birim and atama.coffee_break_active %}
-                                <td>{{ kayit.coffee_break }}</td>
-                                {% break %}
-                                {% endif %}
-                            {% endfor %}
+                            {% if show_coffee_break %}
+                            <td>{{ kayit.coffee_break }}</td>
+                            {% endif %}
                         </tr>
                         {% endfor %}
                     </tbody>

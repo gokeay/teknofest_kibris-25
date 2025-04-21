@@ -207,7 +207,8 @@ def t3personel_form(request):
         'guncelleme_modu': guncelleme_modu,
         'veri_guncelleme_son_saat': veri_guncelleme_son_saat,
         'veri_guncelleme_son_dakika': veri_guncelleme_son_dakika,
-        'kayit_var': kayit_var
+        'kayit_var': kayit_var,
+        'show_coffee_break': any(atama.coffee_break for atama in atamalar)
     }
     return render(request, 'forms/t3personel_form.html', context)
 
